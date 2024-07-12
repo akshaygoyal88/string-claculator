@@ -39,21 +39,36 @@ class StringCalculator
 
   def self.split_numbers(numbers, delimiters)
     delimiters_regex = delimiters.map { |delim| Regexp.escape(delim) }.join("|")
-    numbers.split(/#{delimiters_regex}|\n/)
+    parts = numbers.split(/#{delimiters_regex}/)
+    
+    if parts.any? { |part| part.end_with?("\n") }
+      raise "not need to prove it - just clarifying"
+    end
+    
+    parts.reject { |num| num.empty? }
   end
 end
 
-puts StringCalculator.add("")                  # Output: 0
-puts StringCalculator.add("1")                 # Output: 1
-puts StringCalculator.add("1,2")               # Output: 3
-puts StringCalculator.add("1\n2,3")            # Output: 6
-puts StringCalculator.add("//;\n1;2")          # Output: 3 (delimiter is ';')
-puts StringCalculator.add("//***\n1***2***3")  # Output: 6 (delimiter is '***')
-puts StringCalculator.add("//[*][%]\n1*2%3")   # Output: 6 (delimiters are '*' and '%')
-puts StringCalculator.add("2,1001,6")          # Output: 8 (1001 is ignored)
-puts StringCalculator.add("//[***][%]\n1***2%3") # Output: 6 (delimiters are '***' and '%')
+
+# Test cases to verify functionality
+puts StringCalculator.add("")                    # Output: 0
+puts StringCalculator.add("1")                   # Output: 1
+puts StringCalculator.add("1,2")                 # Output: 3
+puts StringCalculator.add("1\n2,3")              # Output: 6
+puts StringCalculator.add("//;\n1;2")            # Output: 3 
+puts StringCalculator.add("//***\n1***2***3")    # Output: 6 
+puts StringCalculator.add("//[*][%]\n1*2%3")     # Output: 6 
+puts StringCalculator.add("2,1001,6")            # Output: 8 
+puts StringCalculator.add("//[***][%]\n1***2%3") # Output: 6 
+
 begin
-  puts StringCalculator.add("-1,2,-3")         # Exception: negatives not allowed: -1, -3
+  puts StringCalculator.add("-1,2,-3")           
+rescue => e
+  puts "Exception: #{e.message}"
+end
+
+begin
+  puts StringCalculator.add("1,\n") 
 rescue => e
   puts "Exception: #{e.message}"
 end
